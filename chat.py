@@ -1,56 +1,61 @@
+"""Terminal chatbot with conversation memory.
+
+Run:  python chat.py
+Commands:  /new  start a fresh conversation
+           exit  quit
+"""
+
 from ollama import chat
 
-MODEL = "llama3.2"
-OPTIONS = {"num_ctx": 8192, "num_predict": 500}   # context window and response limit
-MAX_MESSAGES = 20                                   # how many last messages we keep
+from chatbot_core import (MODEL, OPTIONS, build_messages, format_stats, new_conversation_name,
+                          save_conversation, stream_chat)
 
-SYSTEM_PROMPT = """You are a patient Python tutor.
-Please reply in English, brief answer (max. 3 sentences).
-When showing code, add a brief explanation.
-If a question is not about programming, steer poitely the discussion back on topic."""
+def main():
+    history = []
+    conversation = new_conversation_name()
+    print(f"Chat with {MODEL}. Type '/new' for a new conversation, 'exit' to quit.\n")
 
-def build_messages(history):
-    """System prompt prepended to every call."""
-    return [{"role": "system", "content": SYSTEM_PROMPT}] + history
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (KeyboardInterrupt, EOFError):   # Ctrl+C / Ctrl+Z
+            break
+        if user_input.lower() in ("exit", "quit"):
+            break
+        if user_input.lower() == "/new":
+            history = []
+            conversation = new_conversation_name()
+            print(f"\nNew conversation: {conversation}\n")
+        if not user_input:
+            continue
 
-def trim_history(history):
-    """Sliding window: last MAX_MESSAGES messages, starting with 'user'."""
-    if len(history) <= MAX_MESSAGES:
-        return history
-    trimmed = history[-MAX_MESSAGES:]
-    while trimmed and trimmed[0]["role"] != "user":
-        trimmed = trimmed[1:]
-    return trimmed
+        history.append({"role": "user", "content": user_input})
 
-history = []
-history = trim_history(history)
+        print("Bot: ", end="", flush=True)
+        answer = ""
+        last_chunk = None
+        try:
+            for chunk in stream_chat(history):
+                text =chunk.message.content
+                print(text, end="", flush=True)
+                answer += text
+                if chunk.done: # stats
+                    last_chunk = chunk
+        except Exception as e:
+            print(f"\n[Error: {e}]\n")
+            history.pop()   # remove the question that got no answer
+            continue
 
-while True:
-    user_input = input("Ty: ").strip()
-    if user_input.lower() in ("exit", "quit"):
-        break
-    if not user_input:
-        continue
+        print()
+        stats = format_stats(last_chunk)
+        if stats:
+            print(f"[{stats}]\n")
+        print()
 
-    history.append({"role": "user", "content": user_input})
+        history.append({"role": "assistant", "content": answer})
+        save_conversation(conversation, history)
 
-    response = chat(
-        model=MODEL,
-        messages=build_messages(history),
-        options=OPTIONS
-    )
+    print("Goodbye!")
 
-    answer = response.message.content
-
-    print("Bot: ", end="", flush=True)
-    answer = ""
-
-    for chunk in chat(model=MODEL, messages=build_messages(history), stream=True):
-        text =chunk.message.content
-        print(text, end="", flush=True)
-        answer += text
-        if chunk.done: # stats
-            last_stats = chunk
-        
-    print("\n")
-    history.append({"role": "assistant", "content": answer})
+if __name__ == "__main__":
+    main()
