@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import streamlit as st
 
 from chatbot_core import (MODEL, format_stats, list_conversations,
@@ -5,6 +7,10 @@ from chatbot_core import (MODEL, format_stats, list_conversations,
                           save_conversation, stream_chat)
 
 st.set_page_config(page_title="Local Chatbot", page_icon="💬")
+
+# --- Glass styling ----------------------------------------------------------
+CSS_FILE = Path(__file__).parent / "styles.css"
+st.markdown(f"<style>{CSS_FILE.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 st.title("My local chatbot")
 
 # session_state will persist across script restarts by Streamlit

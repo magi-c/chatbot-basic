@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --glass-bg: rgba(6, 18, 34, 0.62);
+    --glass-bg-strong: rgba(8, 24, 44, 0.75);
+    --glass-border: rgba(125, 211, 252, 0.22);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --accent: #7dd3fc;
+    --accent-2: #a5f3fc;
+    --text: #ffffff;
+    --muted: rgba(220, 238, 255, 0.82);
+}
+
+html, body, [data-testid="stApp"], button, input, textarea {
+    font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Animated gradient backdrop with soft colour blobs */
+[data-testid="stApp"] {
+    color: var(--text);
+    background:
+        radial-gradient(circle at 15% 20%, rgba(125, 211, 252, 0.22), transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.18), transparent 40%),
+        radial-gradient(circle at 70% 85%, rgba(59, 130, 246, 0.16), transparent 45%),
+        linear-gradient(135deg, #050f1d 0%, #0a1f36 50%, #06141f 100%);
+    background-size: 160% 160%;
+    background-attachment: fixed;
+    animation: drift 24s ease-in-out infinite alternate;
+}
+@keyframes drift {
+    from { background-position: 0% 0%; }
+    to   { background-position: 100% 100%; }
+}
+
+/* Transparent top bar and bottom input area */
+[data-testid="stHeader"],
+[data-testid="stBottom"],
+[data-testid="stBottom"] > div,
+[data-testid="stBottomBlockContainer"] {
+    background: transparent !important;
+}
+
+/* Title with gradient text */
+h1 {
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #ffffff, var(--accent) 55%, var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Sidebar as a frosted panel */
+[data-testid="stSidebar"] {
+    background: rgba(5, 15, 29, 0.78) !important;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border-right: 1px solid var(--glass-border);
+}
+[data-testid="stSidebar"] > div { background: transparent !important; }
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] { color: var(--muted); }
+
+/* Chat bubbles */
+[data-testid="stChatMessage"] {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: var(--glass-shadow);
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 0.9rem;
+    animation: rise 0.35s ease-out;
+}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) {
+    background: linear-gradient(135deg, rgba(14, 70, 110, 0.82), rgba(10, 45, 78, 0.75)) !important;
+    border-color: rgba(125, 211, 252, 0.40);
+    margin-left: 12%;
+}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) {
+    margin-right: 12%;
+}
+@keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Avatars */
+[data-testid="stChatMessageAvatarUser"],
+[data-testid="stChatMessageAvatarAssistant"] {
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+[data-testid="stChatMessageAvatarUser"] {
+    background: linear-gradient(135deg, var(--accent), #3b82f6) !important;
+}
+[data-testid="stChatMessageAvatarAssistant"] {
+    background: linear-gradient(135deg, #22d3ee, #0ea5e9) !important;
+}
+
+/* Code blocks inside answers */
+[data-testid="stChatMessage"] pre {
+    background: rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+/* Chat input */
+[data-testid="stChatInput"] {
+    background: var(--glass-bg-strong) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: var(--glass-shadow);
+}
+[data-testid="stChatInput"] > div { background: transparent !important; border: none !important; }
+[data-testid="stChatInput"]:focus-within {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.25), var(--glass-shadow);
+}
+[data-testid="stChatInput"] textarea { color: var(--text) !important; }
+[data-testid="stChatInput"] textarea::placeholder { color: var(--muted) !important; }
+[data-testid="stChatInputSubmitButton"] {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    border-radius: 12px !important;
+    color: white !important;
+}
+
+/* Buttons */
+.stButton > button {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    color: var(--text);
+    font-weight: 600;
+    backdrop-filter: blur(12px);
+    transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.stButton > button:hover {
+    background: linear-gradient(135deg, rgba(125, 211, 252, 0.55), rgba(56, 189, 248, 0.45));
+    border-color: transparent;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(125, 211, 252, 0.35);
+}
+
+/* Selectbox */
+[data-baseweb="select"] > div {
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(12px);
+}
+[data-baseweb="popover"] ul {
+    background: rgba(6, 18, 34, 0.95) !important;
+    backdrop-filter: blur(20px);
+}
+
+/* Readable text everywhere */
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] li,
+[data-testid="stChatMessage"] td,
+[data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] label,
+[data-baseweb="select"] div {
+    color: var(--text) !important;
+}
+[data-testid="stChatMessage"] { line-height: 1.6; }
+[data-testid="stChatMessage"] code { color: #bae6fd !important; }
+[data-testid="stCaptionContainer"] { color: var(--muted) !important; }
+
+hr { border-color: var(--glass-border) !important; }
+
+/* Thin translucent scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }

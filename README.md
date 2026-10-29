@@ -9,6 +9,8 @@ It comes in two versions sharing the same logic:
 - **`chat.py`**: a chat in the terminal
 - **`app.py`**: a web UI built with Streamlit
 
+![Demo of the Streamlit chatbot](docs/chatbot.gif)
+
 ## Requirements
 
 - Python 3.10+
